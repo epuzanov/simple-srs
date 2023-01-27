@@ -10,16 +10,16 @@
     </parent>
     <groupId>gov.nih.ncats</groupId>
     <artifactId>simple-srs</artifactId>
-    <version>3.0.1</version>
+    <version>3.0.3</version>
     <packaging>jar</packaging>
     <name>simple-srs</name>
     <description>Simple all-in-one GSRS package</description>
     <properties>
-        <java.version>11</java.version>
+        <java.version>8</java.version>
         <spring-cloud.version>2020.0.2</spring-cloud.version>
-        <gsrs.substance.version>3.0.1-SNAPSHOT</gsrs.substance.version>
-        <gsrs.starter.version>3.0.1-SNAPSHOT</gsrs.starter.version>
-        <log4j2.version>2.17.1</log4j2.version>
+        <gsrs.substance.version>3.0.3-SNAPSHOT</gsrs.substance.version>
+        <gsrs.starter.version>3.0.3-SNAPSHOT</gsrs.starter.version>
+        <log4j2.version>2.17.2</log4j2.version>
     </properties>
 
     <distributionManagement>
@@ -46,7 +46,7 @@
                 <dependency>
                     <groupId>gov.nih.ncats</groupId>
                     <artifactId>molwitch-cdk</artifactId>
-                    <version>1.0.9</version>
+                    <version>1.0.12-SNAPSHOT</version>
                 </dependency>
             </dependencies>
         </profile>
@@ -207,6 +207,27 @@
                 <configuration>
                     <fork>false</fork>
                 </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <target>
+                                <get src="https://github.com/ncats/gsrs3-main-deployment/archive/refs/tags/GSRSv${project.version}PUB.zip" dest="target/frontend.zip"/>
+                                <unzip src="target/frontend.zip" dest="target/frontend"/>
+                                <copy todir="target/classes/static"><fileset dir="target/frontend/gsrs3-main-deployment-GSRSv${project.version}PUB/frontend/src/main/resources/static"/></copy>
+                                <delete file="target/frontend.zip"/>
+                                <delete dir="target/frontend"/>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
