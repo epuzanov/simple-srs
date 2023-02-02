@@ -1,8 +1,9 @@
 package gsrs.ncats.simplesrs;
 
+import java.io.IOException;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.PathResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -11,15 +12,15 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.resource.PathResourceResolver;
 import org.springframework.beans.factory.annotation.Value;
 
-import java.io.IOException;
-
 @Configuration
 public class MvcConfiguration implements WebMvcConfigurer {
     @Value("${route.prefix:ginas/app/beta/}")
-    private String prefix;
+    private String prefix = "ginas/app/beta/";
 
-    @Value("${gsrs.frontend.config.file:classpath:/static/assets/data/config.json}")
-    private String frontendConfigFile;
+    @Value("${gsrs.frontend.config.dir:classpath:/static/assets/data}")
+    private String frontendConfigDir = "classpath:/static/assets/data";
+
+    private final Resource indexPage = new ClassPathResource("/static/index.html");
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -32,13 +33,19 @@ public class MvcConfiguration implements WebMvcConfigurer {
                         if(resourcePath.startsWith(prefix)){
                             resourcePath = resourcePath.substring(prefix.length());
                         }
-                        if (!frontendConfigFile.startsWith("classpath:/") && "assets/data/config.json".equals(resourcePath)) {
-                            return new PathResource(frontendConfigFile);
+                        Resource requestedResource;
+                        if (!frontendConfigDir.startsWith("classpath:/")) {
+                            if (resourcePath.startsWith("assets/data/")
+                                    || resourcePath.startsWith("assets/images/")
+                                    || resourcePath.endsWith("styles.custom.css")) {
+                                requestedResource = new FileSystemResource(frontendConfigDir + "/" + resourcePath.substring(resourcePath.lastIndexOf("/")+1));
+                                if (requestedResource.exists() && requestedResource.isReadable()) {
+                                    return requestedResource;
+                                }
+                            }
                         }
-                        Resource requestedResource = location.createRelative(resourcePath);
-
-                        return (requestedResource.exists() && requestedResource.isReadable()) ? requestedResource
-                            : new ClassPathResource("/static/index.html");
+                        requestedResource = location.createRelative(resourcePath);
+                        return (requestedResource.exists() && requestedResource.isReadable()) ? requestedResource : indexPage;
                     }
                 });
     }
