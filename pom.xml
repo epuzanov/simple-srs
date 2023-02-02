@@ -94,6 +94,11 @@
             <artifactId>gsrs-controlled-vocabulary</artifactId>
             <version>${gsrs.starter.version}</version>
         </dependency>
+        <dependency>
+            <groupId>gov.nih.ncats</groupId>
+            <artifactId>gsrs-ep-substance-extension</artifactId>
+            <version>${gsrs.substance.version}</version>
+        </dependency>
 
 
 <!-- ######################################################### -->
@@ -213,14 +218,15 @@
                 <version>3.1.0</version>
                 <executions>
                     <execution>
+                        <id>get-frontend</id>
                         <phase>generate-resources</phase>
                         <configuration>
                             <target>
-                                <get src="https://github.com/ncats/gsrs3-main-deployment/archive/refs/tags/GSRSv${project.version}PUB.zip" dest="target/frontend.zip"/>
-                                <unzip src="target/frontend.zip" dest="target/frontend"/>
-                                <copy todir="target/classes/static"><fileset dir="target/frontend/gsrs3-main-deployment-GSRSv${project.version}PUB/frontend/src/main/resources/static"/></copy>
-                                <delete file="target/frontend.zip"/>
-                                <delete dir="target/frontend"/>
+                                <get src="https://github.com/ncats/gsrs3-main-deployment/archive/refs/tags/GSRSv${project.version}PUB.zip" dest="${project.build.directory}/frontend.zip"/>
+                                <unzip src="${project.build.directory}/frontend.zip" dest="${project.build.directory}/frontend"/>
+                                <copy todir="${project.build.directory}/classes/static"><fileset dir="${project.build.directory}/frontend/gsrs3-main-deployment-GSRSv${project.version}PUB/frontend/src/main/resources/static"/></copy>
+                                <delete file="${project.build.directory}/frontend.zip"/>
+                                <delete dir="${project.build.directory}/frontend"/>
                             </target>
                         </configuration>
                         <goals>
