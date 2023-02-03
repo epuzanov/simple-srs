@@ -83,38 +83,68 @@ You can run the simple GSRS for testing and debugging by running the following c
 ```
 java -jar simple-srs.jar
 ```
-Or you can use your customized main configuration [./src/main/resources/application.conf](./src/main/resources/application.conf) 
-and/or frontend config [./src/main/resources/static/assets/data/config.json](./src/main/resources/static/assets/data/config.json) files.
 
 ```
-java -Dconfig.file=conf/application.conf -Dgsrs.frontend.config.file=conf/config.json -jar simple-srs.jar
+java -Dgsrs.frontend.config.dir=conf/static -jar simple-srs.jar
 ```
 
 ## Configuration
 
-Configuration will be affected by the default configurations included in the core dependencies. 
-These will be supplemented by configuration in [./src/main/resources/application.conf](./src/main/resources/application.conf).  
+### Custom configuration files
 
-Examine this file.  It contains example properties, but you may need to change several properties to run locally as an 
-embedded instance during debugging and development, or to deploy for production.  
+Put your custom configuration file `substances.conf` into the `./conf` directory.
+Put your custom frontend configuration file `config.json` or images file into
+the `./conf/static` directory and add the environment
+variable `-Dgsrs.frontend.config.dir=conf/static` to the startup command line
+or put it into the `substances.conf` configuration file.
 
-```
-# Where indexes and other file resources are kept.
-ix.home="./ginas.ix"
-# Should the port the gateway runs on.
-application.host= "http://localhost:8081"
-# The port your microservice runs on
-server.port=8080
-``` 
+### Use of the Environment Variables and Java properties
 
-In production, you may be running the GSRS as a single Tomcat instance.  If so, the `application.host` will 
-use the same port as your gateway port. Also, your `ix.home` folder needs to be unique to the 
-substances microservice.  For example, `ix.home="/var/lib/tomcat9/webapps/substances.ix"`
-
-Configuration can be modifed before or after building or running the deployed microservice.  The main thing to note is that this configuration will be copied during packaging to a location in the war file, and the war file will be unzipped when placed in the Tomcat `webapps` folder.  Since different configurations are needed for development and production, one approach to take is to have an alternative copy of `application.conf` in a secure location on the server. This can then copied to the deployed location on the production server before run time.  Once tomcat unzips your war file, you will find the configuration here:    
+Simple SRS supports configuration with environment variable and Java properties.
 
 ```
-path/to/webapps/substances/WEB-INF/classes/application.conf
+APPLICATION_HOST=http://localhost:8081 java -Dserver.port=8081 -jar simple-srs.jar
 ```
 
-Overwrite this file with your production version of your configuration.
+
+- API_URL (http://localhost:8080/)
+- API_BASE_PATH
+- APPLICATION_HOST (http://localhost:8080)
+- APPROVALID_GENERATOR (ix.ginas.utils.UNIIGenerator)
+- APPROVALID_NAME
+- APPROVALID_CODESYSTEM
+- AUTH_ALLOW_NONAUTH (true)
+- AUTH_AUTOREGISTER (true)
+- AUTH_AUTOREGISTERACTIVE (false)
+- AUTH_EMAIL_HEADER (AUTHENTICATION_HEADER_NAME_EMAIL)
+- AUTH_ROLES_HEADER
+- AUTH_SYSADMIN_EMAIL
+- AUTH_TRUST_HEADER (false)
+- AUTH_USERNAME_HEADER (OAM_REMOTE_USER)
+- DB_DDL_AUTO (none)
+- DB_DIALECT
+- DB_PASSWORD
+- DB_USERNAME
+- DB_CONNECTION_TIMEOUT (30000)
+- DB_MAXIMUM_POOL_SIZE (10)
+- DB_URL_ADVERSE_EVENTS (jdbc:h2:"${ix.h2.base}"/appinxight;MODE=Oracle;AUTO_SERVER=TRUE)
+- DB_URL_APPLICATIONS (jdbc:h2:"${ix.h2.base}"/appinxight;MODE=Oracle;AUTO_SERVER=TRUE)
+- DB_URL_CLINICAL_TRIALS (jdbc:h2:"${ix.h2.base}"/appinxight;MODE=Oracle;AUTO_SERVER=TRUE)
+- DB_URL_IMPURITIES (jdbc:h2:"${ix.h2.base}"/appinxight;MODE=Oracle;AUTO_SERVER=TRUE)
+- DB_URL_PRODUCTS (jdbc:h2:"${ix.h2.base}"/appinxight;MODE=Oracle;AUTO_SERVER=TRUE)
+- DB_URL_SUBSTANCES (jdbc:h2:"${ix.h2.base}"/appinxight;MODE=Oracle;AUTO_SERVER=TRUE)
+- DB_USE_NEW_ID_GENERATOR_MAPPINGS (true)
+- EUREKA_CLIENT_ENABLED (false)
+- EUREKA_SERVICE_URL (http://localhost:8761/eureka)
+- FRONTEND_ROUTE_PREFIX (ginas/app/beta)
+- FRONTEND_CONFIG_DIR (classpath:/static/assets/data)
+- MS_URL_ADVERSE_EVENTS (http://localhost:8080/adverse-events)
+- MS_URL_APPLICATIONS (http://localhost:8080/applications)
+- MS_URL_CLINICAL_TRIALS (http://localhost:8080/clinical-trials)
+- MS_URL_CLINICAL_TRIALS_EUROPE (http://localhost:8080/clinical-trials)
+- MS_URL_CLINICAL_TRIALS_US (http://localhost:8080/clinical-trials)
+- MS_URL_FRONTEND (http://localhost:8080/frontend)
+- MS_URL_IMPURITIES (http://localhost:8080/impurities)
+- MS_URL_PRODUCTS (http://localhost:8080/products)
+- MS_URL_SUBSTANCES (http://localhost:8080/substances)
+- CATALINA_OPTS (-Dlog.level="info" -Ddeploy.ignore.pattern="(adverse-events|applications|clinical-trials|impurities|products)")
