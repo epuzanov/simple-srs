@@ -15,7 +15,6 @@ import gsrs.EnableGsrsLegacyPayload;
 import gsrs.EnableGsrsLegacySequenceSearch;
 import gsrs.EnableGsrsLegacyStructureSearch;
 import gsrs.EnableGsrsScheduler;
-import gsrs.EnableGsrsJoseCryptoService;
 import gsrs.cv.EnableControlledVocabulary;
 
 @SpringBootApplication
@@ -29,7 +28,6 @@ import gsrs.cv.EnableControlledVocabulary;
 @EntityScan(basePackages ={"ix","gsrs", "gov.nih.ncats"} )
 //@EnableJpaRepositories(basePackages ={"ix","gsrs", "gov.nih.ncats"} )
 @EnableGsrsScheduler
-@EnableGsrsJoseCryptoService
 @EnableGsrsBackup
 @EnableControlledVocabulary
 @EnableAsync

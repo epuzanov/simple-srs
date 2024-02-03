@@ -10,19 +10,18 @@
     </parent>
     <groupId>gov.nih.ncats</groupId>
     <artifactId>simple-srs</artifactId>
-    <version>3.0.3</version>
+    <version>3.1</version>
     <packaging>jar</packaging>
     <name>simple-srs</name>
     <description>Simple all-in-one GSRS package</description>
     <properties>
         <java.version>8</java.version>
         <spring-cloud.version>2020.0.2</spring-cloud.version>
-        <gsrs.substance.version>3.0.3-SNAPSHOT</gsrs.substance.version>
-        <gsrs.starter.version>3.0.3-SNAPSHOT</gsrs.starter.version>
+        <gsrs.substance.version>3.1</gsrs.substance.version>
+        <gsrs.starter.version>3.1</gsrs.starter.version>
         <log4j2.version>2.17.2</log4j2.version>
         <jmespath.version>0.5.1</jmespath.version>
         <httpclient.version>4.5.14</httpclient.version>
-        <jose.version>4.0.0</jose.version>
     </properties>
 
     <distributionManagement>
@@ -49,7 +48,7 @@
                 <dependency>
                     <groupId>gov.nih.ncats</groupId>
                     <artifactId>molwitch-cdk</artifactId>
-                    <version>1.0.12-SNAPSHOT</version>
+                    <version>1.0.14</version>
                 </dependency>
             </dependencies>
         </profile>
@@ -66,7 +65,7 @@
                 <dependency>
                     <groupId>gov.nih.ncats</groupId>
                     <artifactId>molwitch-jchem3</artifactId>
-                    <version>1.0.11-SNAPSHOT</version>
+                    <version>1.0.12-SNAPSHOT</version>
                 </dependency>
                 <dependency>
                     <groupId>chemaxon</groupId>
@@ -115,7 +114,6 @@
 -->
 <!-- FDA specific extra pieces like exporters, validators, etc -->
 <!-- ######################################################### -->
-            
 
         <dependency>
             <groupId>org.eclipse.jdt</groupId>
@@ -154,7 +152,7 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
         </dependency>
-             
+
         <!-- JDBC driver classes START -->
         <dependency>
             <groupId>mysql</groupId>
@@ -182,7 +180,7 @@
             <scope>runtime</scope>
         </dependency>
         <!-- JDBC driver classes END -->
-             
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-tomcat</artifactId>
@@ -207,11 +205,6 @@
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <version>${httpclient.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-rt-rs-security-jose</artifactId>
-            <version>${jose.version}</version>
         </dependency>
     </dependencies>
     <dependencyManagement>
@@ -248,7 +241,7 @@
                                 <get src="https://github.com/ncats/gsrs3-main-deployment/archive/refs/tags/GSRSv${project.version}PUB.zip" dest="${project.build.directory}/frontend.zip"/>
                                 <unzip src="${project.build.directory}/frontend.zip" dest="${project.build.directory}/frontend"/>
                                 <copy todir="${project.build.directory}/classes/static"><fileset dir="${project.build.directory}/frontend/gsrs3-main-deployment-GSRSv${project.version}PUB/frontend/src/main/resources/static"/></copy>
-                                <replace file="${project.build.directory}/classes/static/assets/data/config.json" token="http://localhost:8081/" value="/"/>
+                                <replace file="${project.build.directory}/classes/static/assets/data/config.json" token="version" value="apiBaseUrl&quot;: &quot;/&quot;,&#xA;  &quot;version"/>
                                 <delete file="${project.build.directory}/frontend.zip"/>
                                 <delete dir="${project.build.directory}/frontend"/>
                             </target>
