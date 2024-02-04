@@ -230,20 +230,86 @@
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>com.github.eirslett</groupId>
+                <artifactId>frontend-maven-plugin</artifactId>
+                <version>1.15.0</version>
+                <configuration>
+                    <nodeVersion>v18.19.0</nodeVersion>
+                    <npmVersion>10.2.3</npmVersion>
+                    <installDirectory>target</installDirectory>
+                    <workingDirectory>target/GSRSFrontend</workingDirectory>
+                    <environmentVariables>
+                        <PATH>${env.PATH}:${project.build.directory}/node:${project.build.directory}/GSRSFrontend/node_modules/.bin</PATH>
+                    </environmentVariables>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>install node and npm</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>install-node-and-npm</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>npm run build:gsrs:prod</id>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>run build:gsrs:prod</arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <version>3.1.0</version>
                 <executions>
                     <execution>
-                        <id>get-frontend</id>
+                        <id>get frontend sources</id>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <target>
+                                <get src="https://github.com/ncats/GSRSFrontend/archive/refs/tags/GSRSv${project.version}PUB.zip" dest="${project.build.directory}/frontend.zip"/>
+                                <unzip src="${project.build.directory}/frontend.zip" dest="${project.build.directory}"/>
+                                <move file="${project.build.directory}/GSRSFrontend-GSRSv${project.version}PUB" tofile="${project.build.directory}/GSRSFrontend"/>
+                                <replace file="${project.build.directory}/GSRSFrontend/package.real.json" token="webpack-cli" value="webpack"/>
+                                <replace file="${project.build.directory}/GSRSFrontend/package.real.json" token="4.9.2" value="5.90.1"/>
+                                <replace file="${project.build.directory}/GSRSFrontend/package.real.json" token=" &amp;&amp; npm run build-server"/>
+                                <replace file="${project.build.directory}/GSRSFrontend/src/app/core/config/config.json" token="version" value="apiBaseUrl&quot;: &quot;/&quot;,&#xA;  &quot;version"/>
+                                <replace file="${project.build.directory}/GSRSFrontend/src/app/core/config/config.json" token="3.0.3" value="3.1"/>
+                                <chmod file="${project.build.directory}/GSRSFrontend/build.sh" perm="ugo+rx"/>
+                                <exec dir="${project.build.directory}/GSRSFrontend" executable="./build.sh">
+                                    <env key="PATH" path="${env.PATH}:${project.build.directory}/node"/>
+                                </exec>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>copy dist/browser to classes/static</id>
                         <phase>generate-resources</phase>
                         <configuration>
                             <target>
-                                <get src="https://github.com/ncats/gsrs3-main-deployment/archive/refs/tags/GSRSv${project.version}PUB.zip" dest="${project.build.directory}/frontend.zip"/>
-                                <unzip src="${project.build.directory}/frontend.zip" dest="${project.build.directory}/frontend"/>
-                                <copy todir="${project.build.directory}/classes/static"><fileset dir="${project.build.directory}/frontend/gsrs3-main-deployment-GSRSv${project.version}PUB/frontend/src/main/resources/static"/></copy>
-                                <replace file="${project.build.directory}/classes/static/assets/data/config.json" token="version" value="apiBaseUrl&quot;: &quot;/&quot;,&#xA;  &quot;version"/>
+                                <copy todir="${project.build.directory}/classes/static"><fileset dir="${project.build.directory}/GSRSFrontend/dist/browser"/></copy>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>clean frontend sources</id>
+                        <phase>clean</phase>
+                        <configuration>
+                            <target>
                                 <delete file="${project.build.directory}/frontend.zip"/>
-                                <delete dir="${project.build.directory}/frontend"/>
+                                <delete dir="${project.build.directory}/GSRSFrontend"/>
+                                <delete dir="${project.build.directory}/node"/>
+                                <delete dir="${project.build.directory}/antrun"/>
                             </target>
                         </configuration>
                         <goals>
