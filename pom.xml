@@ -382,7 +382,11 @@
                             <skip>${without.static}</skip>
                             <target>
                                 <copy todir="${project.build.directory}/classes/static"><fileset dir="${project.build.directory}/GSRSFrontend/dist/browser"/></copy>
-                                <replaceregexp file="${project.build.directory}/classes/static/assets/data/config.json" match="version&quot;: &quot;[^&quot;]*" replace="apiBaseUrl&quot;: &quot;/&quot;,&#xA;  &quot;version&quot;: &quot;${project.version}"/>
+                                <replaceregexp file="${project.build.directory}/classes/static/assets/data/config.json" match="http:..localhost:8081" replace="" flags="g"/>
+                                <replaceregexp file="${project.build.directory}/classes/static/assets/data/config.json" match="/ginas/app" replace="" flags="g"/>
+                                <replaceregexp file="${project.build.directory}/classes/static/assets/data/config.json" match="/beta/" replace="/ui/" flags="g"/>
+                                <replaceregexp file="${project.build.directory}/classes/static/assets/data/config.json" match="/ui/" replace="/ginas/app/ui/" flags="g"/>
+                                <replaceregexp file="${project.build.directory}/classes/static/assets/data/config.json" match="disableJSDraw.: false," replace="disableJSDraw&quot;: true,&#xA;  &quot;disableKetcher&quot;: false,&#xA;  &quot;structureEditor&quot;: &quot;ketcher&quot;,"/>
                             </target>
                         </configuration>
                         <goals>
